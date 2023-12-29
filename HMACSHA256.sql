@@ -1,0 +1,40 @@
+CREATE DEFINER=`your_user_here`@`%` FUNCTION `HMACSHA256`(secret_key VARCHAR(256), val VARCHAR(2048)) RETURNS char(64) CHARSET utf8
+    DETERMINISTIC
+BEGIN
+DECLARE ipad,opad BINARY(64);
+DECLARE hexkey CHAR(128);
+DECLARE hmac CHAR(64);
+
+SET hexkey = RPAD(HEX(secret_key),128,"0");
+
+IF LENGTH(secret_key) > 64 THEN
+   SET hexkey = RPAD(SHA2(secret_key, '256'), 128, "0");
+END IF;
+
+SET ipad = UNHEX(CONCAT(
+LPAD(CONV(CONV( MID(hexkey,1  ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,17 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,33 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,49 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,65 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,81 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,97 ,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,113,16), 16, 10 ) ^ CONV( '3636363636363636', 16, 10 ),10,16),16,"0")
+));
+
+SET opad = UNHEX(CONCAT(
+LPAD(CONV(CONV( MID(hexkey,1  ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,17 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,33 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,49 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,65 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,81 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,97 ,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0"),
+LPAD(CONV(CONV( MID(hexkey,113,16), 16, 10 ) ^ CONV( '5c5c5c5c5c5c5c5c', 16, 10 ),10,16),16,"0")
+));
+
+SET hmac = SHA2(CONCAT(opad,UNHEX(SHA2(CONCAT(ipad,val), '256'))), '256');
+
+RETURN hmac;
+
+END
