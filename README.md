@@ -1,1 +1,2 @@
-# HMACSHA256
+# HMACSHA256 for MySQL
+
