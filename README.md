@@ -4,7 +4,7 @@ Create for function name HMACSHA256 in MySQL
 
 ## Configuration
 
-in function HMACSHA256, change `your_user_here` to your own user
+in function HMACSHA256, change `your_user_here` to your own user susch as `root`, etc
 
 ```sql
 CREATE DEFINER=`your_user_here`@`%` FUNCTION `HMACSHA256`(secret_key VARCHAR(256), val VARCHAR(2048)) RETURNS char(64) CHARSET utf8;
