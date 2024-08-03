@@ -6,8 +6,8 @@ Create for function name HMACSHA256 in MySQL
 
 in file HMACSHA256.sql, change `root` to your own user if you want to use another user
 
-```text
-CREATE DEFINER=`root`@`%` <-- here in line 1 of the file HMACSHA256.sql
+```sql
+CREATE DEFINER=`root`@`%` -- <-- here in line 1 of the file HMACSHA256.sql
 ```
 
 ## Usage
